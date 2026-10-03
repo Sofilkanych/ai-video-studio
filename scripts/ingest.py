@@ -179,6 +179,11 @@ def run(job: dict[str, Any], ctx: Context) -> str:
             raise StepError(str(e)) from e
         write_json(MEDIA / "media.json", media_report)
     # режим «script»: аудіо створює крок synthesize
-    slides = ingest_slides(ROOT / job["inputs"]["presentation"]["path"], job["job_id"], cfg, ctx)
+    if "lecture" in job["inputs"]:
+        from scripts.compose import compose_deck
+        presentation = compose_deck(job, ctx)  # текст → план слайдів (Claude) → PPTX з нотатками
+    else:
+        presentation = ROOT / job["inputs"]["presentation"]["path"]
+    slides = ingest_slides(presentation, job["job_id"], cfg, ctx)
     job.setdefault("flags", {}).update(slides["flags"])
     return "INGESTED"

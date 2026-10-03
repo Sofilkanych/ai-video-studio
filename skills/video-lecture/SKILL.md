@@ -1,13 +1,14 @@
 ---
 name: video-lecture
 description: >-
-  Turns a presentation (PPTX/PDF) into a finished narrated video lecture (MP4 + SRT) with the
-  ai-video-studio pipeline: either from a recorded talk (presenter video/voice) or from a written
-  per-slide script voiced by ElevenLabs (incl. the user's cloned voice), with automatic slide
+  Turns lecture material into a finished narrated video lecture (MP4 + SRT) with the
+  ai-video-studio pipeline: from a presentation plus a recorded talk, from a presentation plus a
+  per-slide script, or from just the lecture text (Claude builds the slides and narration), voiced
+  by ElevenLabs (incl. the user's cloned voice), with automatic slide
   sync, Claude-directed highlights/zoom/callouts, Remotion rendering and automatic QA. Use this
   skill whenever the user wants to make a video, video lecture, video presentation, webinar
-  recording, course video or narrated slides from a deck, script, speaker notes or a recording —
-  in any language, e.g. «зроби відеолекцію з презентації», «озвуч слайди моїм голосом»,
+  recording, course video or narrated slides from a deck, a script, speaker notes, a recording or plain lecture text —
+  in any language, e.g. «зроби відеолекцію з презентації», «ось текст лекції — зроби відео», «озвуч слайди моїм голосом»,
   «змонтуй запис виступу зі слайдами», «перерендер без субтитрів», «виправ вимову в лекції» —
   even if they don't name the pipeline. Also use it to edit or re-render a lecture made earlier.
 ---
@@ -44,12 +45,17 @@ empty without an error — restore them before running anything (see the same fi
 |---|---|---|
 | Presentation + recording of the talk (video or audio) | recording | `presentation.pptx` + `presenter.mp4` / `voice.wav` |
 | Presentation + text for each slide | script | `presentation.pptx` + `script.md`, or text in PPTX speaker notes |
+| Only the lecture text (article, notes, docx) | text → deck | `lecture.md` / `.txt` / `.docx`, no presentation |
 
 Don't copy the user's files around: point the run at their folder with `--input DIR`. The folder
 must contain exactly one presentation and either one recording or a script (both at once is an
 error by design). A Word script whose text matches the speaker notes needs no conversion — check
 that first; otherwise convert it to `script.md` (`## Слайд N` headings, see
 `references/script-and-voice.md`).
+
+In **text → deck** mode the `compose` step (Claude API) builds the slides and narration first —
+`references/script-and-voice.md` → "Text → deck" explains how to review and edit the generated
+plan before paying for the voice.
 
 ## 3. Script mode: protect the user's money and pronunciation
 

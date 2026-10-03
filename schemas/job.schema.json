@@ -25,9 +25,7 @@
     },
     "inputs": {
       "type": "object",
-      "required": [
-        "presentation"
-      ],
+      "required": [],
       "additionalProperties": false,
       "properties": {
         "presentation": {
@@ -40,6 +38,9 @@
           "$ref": "#/$defs/input_file"
         },
         "script": {
+          "$ref": "#/$defs/input_file"
+        },
+        "lecture": {
           "$ref": "#/$defs/input_file"
         }
       }

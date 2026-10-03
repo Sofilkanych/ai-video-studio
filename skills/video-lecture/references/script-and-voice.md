@@ -37,6 +37,17 @@ paras = ["".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", p))
 If conversion is needed, write `script.md` next to the user's files (ask before writing there),
 dropping per-slide title lines that aren't meant to be spoken.
 
+## Text → deck (only the lecture text is given)
+
+- `compose` sends the text to Claude (structured output, validated: slide count ≈ words/130,
+  first slide `title`, last `closing`, field lengths, narration 60–200 words per slide, numbers in
+  words, narration covering ≥ 60 % of the source). Result: `work/compose/deck_plan.json` +
+  `work/compose/<job_id>.pptx` with the narration in speaker notes.
+- Before the paid voice step it is worth looking at the deck: run until `INGESTED`, open the PNGs in
+  `work/slides/`, or the PPTX. Edit `deck_plan.json` by hand and `run.py --redo ingest` to rebuild
+  without a new Claude call (the plan is cached by the text's hash).
+- Theme: `config.yaml → compose.theme` (`forest`, `neutral`); footer: `compose.footer`.
+
 ## Voice
 
 - Provider `elevenlabs` (default; model `eleven_multilingual_v2` — Ukrainian, character-level

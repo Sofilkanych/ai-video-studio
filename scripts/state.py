@@ -44,6 +44,7 @@ STEP_ENTRY = {
 
 PRESENTATION_EXT = {".pptx", ".pdf"}
 SCRIPT_NAMES = ["script.md", "script.txt", "сценарій.md", "сценарій.txt"]
+TEXT_EXT = {".md", ".txt", ".docx"}
 VIDEO_EXT = {".mp4", ".mov", ".m4v"}
 AUDIO_EXT = {".wav", ".m4a", ".mp3", ".aac", ".flac"}
 
@@ -127,10 +128,20 @@ def discover_inputs(input_dir: Path | None = None) -> dict[str, Path]:
                    "Запис екрана", required=False)
     script = _pick(files, SCRIPT_NAMES, set(), "Сценарій", required=False)
     rest = [f for f in files if f not in (screen, script)]
-    found: dict[str, Path] = {
-        "presentation": _pick(rest, ["presentation.pptx", "presentation.pdf"], PRESENTATION_EXT,
-                              "Презентація", required=True),
-    }
+    found: dict[str, Path] = {}
+    presentation = _pick(rest, ["presentation.pptx", "presentation.pdf"], PRESENTATION_EXT,
+                         "Презентація", required=False)
+    if presentation is None:
+        # лише текст лекції → презентацію складе крок compose (режим «текст → презентація»)
+        if script:
+            rest.append(script)
+        lecture = _pick(rest, ["lecture.md", "lecture.txt", "lecture.docx"], TEXT_EXT,
+                        "Текст лекції (або презентація)", required=True)
+        found["lecture"] = lecture
+        if screen:
+            found["screen_recording"] = screen
+        return found
+    found["presentation"] = presentation
     media = _pick(rest, ["presenter.mp4", "presenter.mov", "voice.wav"], VIDEO_EXT | AUDIO_EXT,
                   "Відео/аудіо ведучого", required=False)
     if media and script:

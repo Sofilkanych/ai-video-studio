@@ -139,5 +139,10 @@ def finalize(job: dict[str, Any], ctx: Context) -> str:
         "llm_calls": calls,
     }
     write_json(OUTPUT / "report.json", report)
-    ctx.log(f"  output/final.mp4, output/final.srt, output/report.json ({version})")
+    # окрема копія кожного job — наступні прогони не перезаписують готові відео
+    keep = OUTPUT / job["job_id"]
+    keep.mkdir(parents=True, exist_ok=True)
+    for name in ("final.mp4", "final.srt", "report.json"):
+        shutil.copy2(OUTPUT / name, keep / name)
+    ctx.log(f"  output/final.mp4, output/final.srt, output/report.json ({version}); копія: output/{job['job_id']}/")
     return "DONE"

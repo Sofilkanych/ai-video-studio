@@ -62,6 +62,11 @@ tts:                          # режим «script»: озвучення сце
     empty_slide: 3.0          # слайд без тексту
     tail: 1.0
 
+compose:                      # режим «текст → презентація» (у input/ лише текст лекції)
+  theme: forest               # forest (Georgia + Calibri, темно-зелений) | neutral
+  words_per_slide: 130        # ≈ 1 хв озвучки на слайд
+  footer: null                # текст у колонтитулі; null — Claude пропонує з тексту
+
 captions:
   burn_in: false              # true — субтитри у відео; final.srt поруч з відео створюється завжди
 
