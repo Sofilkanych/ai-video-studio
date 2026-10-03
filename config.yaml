@@ -1,0 +1,104 @@
+# Конфігурація AI Video Studio. Значення за замовчуванням — для MVP.
+
+project:
+  language: uk
+  fps: 30
+
+profiles:
+  preview:
+    width: 1280
+    height: 720
+    crf: 28
+  final:
+    width: 1920
+    height: 1080
+    crf: 18
+
+ingest:
+  # HDR → SDR (bt709). auto: zscale, якщо є у ffmpeg, інакше avconvert.
+  # Якщо HDR виявлено, а робочого tonemapper немає — крок падає.
+  tonemapper: auto            # auto | zscale | avconvert
+  master_audio_rate: 48000
+  stt_audio_rate: 16000
+  denoise: none               # none | afftdn | arnndn
+
+slides:
+  renderer: powerpoint        # powerpoint | libreoffice
+  fallback: libreoffice
+  png_width: 3840             # запас для zoom; фінальне відео 1080p
+  powerpoint_timeout_s: 180
+
+stt:
+  engine: whisper.cpp
+  binary: whisper-cli
+  model: large-v3
+  models_dir: ~/.cache/ai-video-studio/whisper
+  glossary: glossary.txt
+  carry_initial_prompt: true
+  dtw: true
+  # whisper.cpp 1.9.4: з --vad таймкоди токенів/DTW лишаються у «стиснутій» шкалі без пауз
+  # (зсув до 1.5 с на фікстурі). Тому VAD вимкнено; галюцинації фільтруються за p і повторами.
+  vad: false
+
+tts:                          # режим «script»: озвучення сценарію по слайдах
+  provider: elevenlabs        # elevenlabs | macos_say (локальна чернетка, голос Lesya)
+  model: eleven_multilingual_v2   # підтримує українську і таймкоди; eleven_v3 — експериментально
+  # voice_id береться з .env (ELEVENLABS_VOICE_ID) — ваш клонований голос
+  output_format: mp3_44100_128
+  language_code: null         # напр. "uk", якщо модель підтримує примусову мову
+  seed: 42                    # стабільніший результат при повторному синтезі
+  voice_settings:
+    stability: 0.5
+    similarity_boost: 0.8
+    style: 0.0
+    use_speaker_boost: true
+    speed: 1.0
+  lexicon: lexicon.txt        # словник вимови: «АБК = а-бе-ка»
+  macos_voice: Lesya
+  pauses:                     # секунди
+    lead_in: 0.5
+    between_slides: 0.8
+    marker: 1.0               # [пауза] без числа
+    empty_slide: 3.0          # слайд без тексту
+    tail: 1.0
+
+captions:
+  burn_in: false              # true — субтитри у відео; final.srt поруч з відео створюється завжди
+
+review:
+  transcript: false           # true → пауза після TRANSCRIBED для перевірки людиною
+
+sync:
+  sources: [screen_match, verbal_cue, llm_alignment]
+  low_confidence: 0.6
+
+director:
+  provider: anthropic_api     # anthropic_api | claude_cli
+  model: claude-opus-5-5     # Claude API
+  cli_model: opus            # claude -p (лише тестові фікстури)
+  max_retries: 3
+  slide_image_width: 1280
+
+render:
+  chunk_seconds: 60          # кодек/колірний простір фіксовані в scripts/render.py (RENDER_VERSION)
+
+audio:
+  loudness_lufs: -16
+  true_peak_dbtp: -1.0
+
+qa:
+  max_repair_loops: 3
+
+budget:                      # застосовується з Фази 3 (generated assets)
+  max_generation_usd_per_job: 10
+  max_usd_per_clip: 1.5
+
+data_policy:
+  # Робочі матеріали — лише через Claude API / Team / Enterprise.
+  allow_claude_api: true
+  allow_consumer_subscription: false
+  # Сценарій лекції передається ElevenLabs для синтезу голосу (обрано 2026-10-02).
+  allow_tts_cloud: true
+  # Зовнішня генерація зображень/відео (Фаза 3). У MVP вимкнено.
+  external_generation: false
+  offline_only: false

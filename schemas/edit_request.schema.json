@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "edit_request.schema.json",
+  "title": "Edit request",
+  "type": "object",
+  "required": ["request", "base_version", "affected_scenes", "changes_duration"],
+  "additionalProperties": false,
+  "properties": {
+    "request": {"type": "string", "description": "Природна команда користувача."},
+    "base_version": {"type": "string", "pattern": "^v[0-9]{3}$", "description": "Версія, до якої належать таймкоди в команді."},
+    "affected_scenes": {"type": "array", "items": {"type": "string", "pattern": "^s[0-9]+$"}},
+    "changes_duration": {"type": "boolean", "description": "true → перерахунок таймкодів, субтитрів, slide_timings і аудіо після точки зміни."},
+    "notes": {"type": "string"}
+  }
+}

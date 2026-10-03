@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "slide_timings.schema.json",
+  "title": "Slide timings",
+  "type": "object",
+  "required": [
+    "duration",
+    "transitions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "duration": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "transitions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "slide",
+          "start",
+          "source",
+          "confidence"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "slide": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0
+          },
+          "source": {
+            "enum": [
+              "screen_match",
+              "verbal_cue",
+              "text_alignment",
+              "llm_alignment",
+              "manual",
+              "script"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    }
+  }
+}

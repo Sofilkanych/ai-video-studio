@@ -1,0 +1,40 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# agent state
+.omc/
+**/.omc/
+
+# iCloud: важкі папки — *.nosync (не синхронізуються), під старими назвами — symlink
+*.nosync
+.venv
+work
+remotion/node_modules
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# node / remotion
+node_modules/
+remotion/out/
+remotion/public/job/
+
+# pipeline data (originals, cache, results)
+input/*
+!input/.gitkeep
+work/*
+!work/.gitkeep
+output/*
+!output/.gitkeep
+tests/fixtures/generated/
+
+.DS_Store
+
+# локальні словники (шаблони — *.example.txt)
+glossary.txt
+lexicon.txt

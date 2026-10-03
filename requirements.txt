@@ -1,0 +1,8 @@
+python-pptx>=1.0
+PyYAML>=6.0
+jsonschema>=4.23
+rfc3339-validator>=0.1.4
+Pillow>=11
+pytest>=8
+anthropic>=0.70
+numpy>=2.1

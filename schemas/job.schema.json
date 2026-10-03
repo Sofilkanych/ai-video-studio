@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "job.schema.json",
+  "title": "Job state",
+  "type": "object",
+  "required": [
+    "job_id",
+    "created_at",
+    "state",
+    "inputs",
+    "history"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "pattern": "^job_[0-9]{8}_[0-9]{6}$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "state": {
+      "$ref": "#/$defs/state"
+    },
+    "inputs": {
+      "type": "object",
+      "required": [
+        "presentation"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "presentation": {
+          "$ref": "#/$defs/input_file"
+        },
+        "media": {
+          "$ref": "#/$defs/input_file"
+        },
+        "screen_recording": {
+          "$ref": "#/$defs/input_file"
+        },
+        "script": {
+          "$ref": "#/$defs/input_file"
+        }
+      }
+    },
+    "timeline_version": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^v[0-9]{3}$"
+    },
+    "repair_loops": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "flags": {
+      "type": "object",
+      "description": "Відхилення від основного шляху, наприклад slides_renderer=libreoffice.",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "chunks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "chunk_id",
+          "start_frame",
+          "end_frame",
+          "hash",
+          "status"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "chunk_id": {
+            "type": "string"
+          },
+          "start_frame": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_frame": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "hash": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "rendered",
+              "failed"
+            ]
+          },
+          "file": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "error": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "step",
+        "message"
+      ],
+      "properties": {
+        "step": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "at",
+          "state"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "$ref": "#/$defs/state"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mode": {
+      "enum": [
+        "recording",
+        "script"
+      ]
+    }
+  },
+  "$defs": {
+    "state": {
+      "enum": [
+        "NEW",
+        "INGESTED",
+        "TRANSCRIBED",
+        "TRANSCRIPT_REVIEWED",
+        "SLIDES_SYNCED",
+        "DIRECTED",
+        "ASSETS_READY",
+        "PREVIEW_RENDERED",
+        "QA_FAILED",
+        "PATCHED",
+        "QA_PASSED",
+        "FINAL_RENDERED",
+        "FINAL_QA_PASSED",
+        "DONE"
+      ]
+    },
+    "input_file": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "bytes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

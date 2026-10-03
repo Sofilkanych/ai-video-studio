@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "slide_manifest.schema.json",
+  "title": "Slide manifest",
+  "type": "object",
+  "required": [
+    "source",
+    "renderer",
+    "slide_width_px",
+    "slide_height_px",
+    "slides"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "type": "string"
+    },
+    "renderer": {
+      "enum": [
+        "powerpoint",
+        "libreoffice",
+        "pdf"
+      ]
+    },
+    "slide_width_px": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "slide_height_px": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "slides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "slide",
+          "hidden",
+          "elements"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "slide": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Номер слайда в PPTX (1-based), включно з прихованими."
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "pdf_page": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "description": "Сторінка PDF; null для прихованих."
+          },
+          "image": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "content_mask": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "dark_background": {
+            "type": "boolean"
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/element"
+            }
+          },
+          "builds": {
+            "type": "array",
+            "description": "Порядок вбудованих анімацій з p:timing.",
+            "items": {
+              "type": "object",
+              "required": [
+                "order",
+                "element_id",
+                "kind"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "order": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "element_id": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "entrance",
+                    "exit",
+                    "emphasis",
+                    "motion"
+                  ]
+                },
+                "level": {
+                  "enum": [
+                    "shape",
+                    "paragraph"
+                  ]
+                }
+              }
+            }
+          },
+          "advance_after_s": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "advTm: тривалість показу, не таймкод."
+          },
+          "bg_color": {
+            "type": "string",
+            "pattern": "^#[0-9a-f]{6}$"
+          },
+          "content_coverage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "bbox": {
+      "type": "array",
+      "description": "[x, y, w, h] у пікселях PNG слайда.",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "element": {
+      "type": "object",
+      "required": [
+        "element_id",
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "element_id": {
+          "type": "string",
+          "pattern": "^slide[0-9]+/[A-Za-z0-9_/]+$"
+        },
+        "type": {
+          "enum": [
+            "title",
+            "text",
+            "table",
+            "table_cell",
+            "chart",
+            "picture",
+            "group",
+            "shape",
+            "paragraph"
+          ]
+        },
+        "bbox": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/bbox"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "table": {
+          "type": "object",
+          "properties": {
+            "rows": {
+              "type": "integer"
+            },
+            "cols": {
+              "type": "integer"
+            },
+            "cells": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "chart": {
+          "type": "object",
+          "properties": {
+            "chart_type": {
+              "type": "string"
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            "series": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "values"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "values": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
