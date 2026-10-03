@@ -128,7 +128,6 @@ python run.py --redo direct                                # переробит�
 
 ## Ліцензії
 
-Код цього репозиторію — [MIT](LICENSE). Залежності мають власні ліцензії:
+Код цього репозиторію — [MIT](LICENSE). Залежності мають власні ліцензії, зокрема:
 
-
-Remotion безкоштовний лише на етапі оцінки; для робочого використання компанією потрібна Company License — див. [remotion.dev/license](https://www.remotion.dev/license).
+- Remotion безкоштовний лише на етапі оцінки; для робочого використання компанією потрібна Company License — див. [remotion.dev/license](https://www.remotion.dev/license).
